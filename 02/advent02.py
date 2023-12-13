@@ -57,14 +57,14 @@ def parse_file_part_one(file: str | Path, red: int = 12, green: int = 13, blue: 
     with open(file) as file:
         games = [Game.from_line(line) for line in file]
 
-    return sum([game.id for game in games if game.is_possible(red, green, blue)])
+    return sum(game.id for game in games if game.is_possible(red, green, blue))
 
 
 def parse_file_part_two(file: str | Path) -> int:
     with open(file) as file:
         games = [Game.from_line(line) for line in file]
 
-    return sum([game.power for game in games])
+    return sum(game.power for game in games)
 
 
 if __name__ == '__main__':
