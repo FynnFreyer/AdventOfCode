@@ -28,21 +28,45 @@ class Game:
 
         return cls(id=game_id, **data)
 
+    @property
+    def max_red(self) -> int:
+        return max(self.red)
+
+    @property
+    def max_green(self) -> int:
+        return max(self.green)
+
+    @property
+    def max_blue(self) -> int:
+        return max(self.blue)
+
     def is_possible(self, red: int, green: int, blue: int) -> bool:
-        red_plausible = max(self.red) <= red
-        green_plausible = max(self.green) <= green
-        blue_plausible = max(self.blue) <= blue
+        red_plausible = self.max_red <= red
+        green_plausible = self.max_green <= green
+        blue_plausible = self.max_blue <= blue
 
         return red_plausible and green_plausible and blue_plausible
 
+    @property
+    def power(self) -> int:
+        return self.max_red * self.max_green * self.max_blue
 
-def parse_file(file: str | Path, red: int = 12, green: int = 13, blue: int = 14) -> int:
+
+
+def parse_file_part_one(file: str | Path, red: int = 12, green: int = 13, blue: int = 14) -> int:
     with open(file) as file:
         games = [Game.from_line(line) for line in file]
 
     return sum([game.id for game in games if game.is_possible(red, green, blue)])
 
 
+def parse_file_part_two(file: str | Path) -> int:
+    with open(file) as file:
+        games = [Game.from_line(line) for line in file]
+
+    return sum([game.power for game in games])
+
+
 if __name__ == '__main__':
-    sum_of_ids = parse_file("input.txt")
-    print(sum_of_ids)
+    sum_of_powers = parse_file_part_two("input.txt")
+    print(sum_of_powers)
