@@ -47,14 +47,12 @@ def parse_file_part_two(file: str | Path) -> int:
     with open(file) as file:
         cards = [Card.from_line(line) for line in file]
 
-    # TODO: this is slow as fuck
     for i, card in enumerate(cards):
-        for _ in range(card.multiplier):
-            for offset in range(card.win_count):
-                try:
-                    cards[i + offset + 1].multiplier += 1
-                except IndexError:
-                    break  # end of table -> next card
+        for offset in range(card.win_count):
+            try:
+                cards[i + offset + 1].multiplier += card.multiplier
+            except IndexError:
+                break  # end of table -> next card
 
     return sum(card.multiplier for card in cards)
 
