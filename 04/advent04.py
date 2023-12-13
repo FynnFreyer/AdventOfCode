@@ -11,15 +11,19 @@ class Card:
     id: int
     winning_numbers: set[int] = field(default_factory=set)
     your_numbers: set[int] = field(default_factory=set)
+    multiplier: int = 1
 
     @property
     def wins(self) -> set[int]:
         return set(number for number in self.your_numbers if number in self.winning_numbers)
 
     @property
+    def win_count(self) -> int:
+        return len(self.wins)
+
+    @property
     def points(self) -> int:
-        win_count = len(self.wins)
-        return 2**(win_count - 1) if win_count else 0
+        return 2 ** (self.win_count - 1) if self.win_count else 0
 
     @classmethod
     def from_line(cls, line: str) -> Self:
@@ -39,6 +43,22 @@ def parse_file_part_one(file: str | Path) -> int:
         return sum(card.points for card in cards)
 
 
+def parse_file_part_two(file: str | Path) -> int:
+    with open(file) as file:
+        cards = [Card.from_line(line) for line in file]
+
+    # TODO: this is slow as fuck
+    for i, card in enumerate(cards):
+        for _ in range(card.multiplier):
+            for offset in range(card.win_count):
+                try:
+                    cards[i + offset + 1].multiplier += 1
+                except IndexError:
+                    break  # end of table -> next card
+
+    return sum(card.multiplier for card in cards)
+
+
 if __name__ == '__main__':
-    sum_of_points = parse_file_part_one("input.txt")
-    print(sum_of_points)
+    sum_of_cards = parse_file_part_two("input.txt")
+    print(sum_of_cards)
